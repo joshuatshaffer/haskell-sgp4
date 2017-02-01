@@ -13,8 +13,6 @@ maintainer:          joshuatshaffer@gmail.com
 -- category:            
 build-type:          Simple
 cabal-version:       >=1.10
-ghc-options: -pgmlg++
-
 
 extra-source-files:
   src/c-wrapper
@@ -23,10 +21,12 @@ library
   exposed-modules:     Sgp4
   -- other-modules:       
   -- other-extensions:    
-  build-depends:       base >=4.8 && <4.9
+  build-depends:       c2hs, base >=4.8 && <4.9
+  Build-tools: c2hs
   hs-source-dirs:      src
   default-language:    Haskell2010
   extra-libraries:     stdc++
+  ghc-options: -pgmlg++
 
   c-sources:           src/c-wrapper/wrapper.cpp src/c-wrapper/sgp4unit.cpp src/c-wrapper/sgp4ext.cpp src/c-wrapper/sgp4io.cpp 
   Include-dirs:        src/c-wrapper

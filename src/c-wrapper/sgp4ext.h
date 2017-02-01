@@ -30,6 +30,8 @@
 
 
 // ------------------------- function declarations -------------------------
+extern "C" {
+
 double  sgn
 (
     double x
@@ -73,8 +75,6 @@ void rv2coe
     double& p, double& a, double& ecc, double& incl, double& omega, double& argp,
     double& nu, double& m, double& arglat, double& truelon, double& lonper
 );
-
-extern "C" {
 
 void    jday
 (

@@ -35,6 +35,8 @@
 
 // ------------------------- function declarations -------------------------
 
+extern "C" {
+
 void twoline2rv
 (
     char longstr1[130], char longstr2[130],
@@ -44,5 +46,6 @@ void twoline2rv
     elsetrec& satrec
 );
 
+}
 #endif
 #endif

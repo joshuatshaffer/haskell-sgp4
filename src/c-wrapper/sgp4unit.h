@@ -48,9 +48,8 @@
 *                     80  norad
 *                           original baseline
 *       ----------------------------------------------------------------      */
-#ifdef __cplusplus
-#include <math.h>
-#include <stdio.h>
+
+
 #define SGP4Version  "SGP4 Version 2011-12-30"
 
 #define pi 3.14159265358979323846
@@ -93,8 +92,13 @@ typedef struct elsetrec
          no;
 } elsetrec;
 
+#ifdef __cplusplus
+#include <math.h>
+#include <stdio.h>
 
 // --------------------------- function declarations ----------------------------
+extern "C" {
+
 bool sgp4init
      (
        gravconsttype whichconst,  char opsmode,  const int satn,     const double epoch,
@@ -126,5 +130,6 @@ void getgravconst
       double& j4,
       double& j3oj2
      );
+}
 #endif
 #endif
