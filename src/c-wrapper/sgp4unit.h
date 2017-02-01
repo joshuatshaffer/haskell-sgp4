@@ -48,7 +48,7 @@
 *                     80  norad
 *                           original baseline
 *       ----------------------------------------------------------------      */
-
+#ifdef __cplusplus
 #include <math.h>
 #include <stdio.h>
 #define SGP4Version  "SGP4 Version 2011-12-30"
@@ -126,6 +126,5 @@ void getgravconst
       double& j4,
       double& j3oj2
      );
-
 #endif
-
+#endif

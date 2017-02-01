@@ -11,8 +11,10 @@ author:              joshuatshaffer
 maintainer:          joshuatshaffer@gmail.com
 -- copyright:           
 -- category:            
-build-type:          Custom
+build-type:          Simple
 cabal-version:       >=1.10
+ghc-options: -pgmlg++
+
 
 extra-source-files:
   src/c-wrapper
@@ -24,7 +26,9 @@ library
   build-depends:       base >=4.8 && <4.9
   hs-source-dirs:      src
   default-language:    Haskell2010
-  c-sources:           src/c-wrapper/wrapper.c
+  extra-libraries:     stdc++
+
+  c-sources:           src/c-wrapper/wrapper.cpp src/c-wrapper/sgp4unit.cpp src/c-wrapper/sgp4ext.cpp src/c-wrapper/sgp4io.cpp 
   Include-dirs:        src/c-wrapper
-  Includes:            wrapper.h
-  Install-includes:    wrapper.h
+  Includes:            sgp4unit.h sgp4ext.h sgp4io.h wrapper.h
+  Install-includes:    sgp4unit.h sgp4ext.h sgp4io.h wrapper.h
