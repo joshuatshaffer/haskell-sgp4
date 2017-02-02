@@ -7,14 +7,16 @@
 extern "C" {
 #endif
 
+int mult (int a, int b);
+
 typedef struct {
-    double r[3], v[3];
+    double rx, ry, rz, vx, vy, vz;
     elsetrec satrec;
 } propagateTuple;
 
 elsetrec initOrbit (char* line1, char* line2);
 
-propagateTuple propagateOrbit (  elsetrec satrec,
+propagateTuple propagateOrbit (  const elsetrec satrec,
                                  const int year, const int month, const int day,
                                  const int hour, const int minute, const double second
                                  );

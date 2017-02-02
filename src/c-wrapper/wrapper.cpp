@@ -5,6 +5,10 @@
 #include "sgp4unit.h"
 #define minutes_per_day 1440
 
+int mult (int a, int b) {
+    return a * b;
+}
+
 elsetrec initOrbit (char* line1, char* line2) {
     char longstr1[130], longstr2[130];
     elsetrec satrec;
@@ -20,7 +24,7 @@ elsetrec initOrbit (char* line1, char* line2) {
     return satrec;
 }
 
-propagateTuple propagateOrbit ( elsetrec satrec,
+propagateTuple propagateOrbit ( const elsetrec satrec,
                                 const int year, const int month, const int day,
                                 const int hour, const int minute, const double second
                                 )
@@ -36,7 +40,13 @@ propagateTuple propagateOrbit ( elsetrec satrec,
     double r[3], v[3];
 
     gravconsttype whichconst = wgs72;
-    sgp4 (whichconst, output.satrec, tsince, output.r, output.v);
+    sgp4 (whichconst, output.satrec, tsince, r, v);
+    output.rx = r[0];
+    output.ry = r[1];
+    output.rz = r[2];
+    output.vx = v[0];
+    output.vy = v[1];
+    output.vz = v[2];
 
     return output;
 }
