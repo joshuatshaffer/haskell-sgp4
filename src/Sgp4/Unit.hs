@@ -1,4 +1,4 @@
-module Unit
+module Sgp4.Unit
     (sgp4Version
     ,GravityConsts
     ,wgs72old, wgs72, wgs84

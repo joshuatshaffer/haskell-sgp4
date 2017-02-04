@@ -1,4 +1,4 @@
-module Ext
+module Sgp4.Ext
     (sgn
     ,mag
     ,cross
