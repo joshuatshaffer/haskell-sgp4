@@ -6,20 +6,17 @@ module AnomalyConversions
     ,trueAn2EcAn, ecAn2MeAn
     ,meAn2TrueAn, trueAn2MeAn
     ) where
-import CommonMath (loopToRange)
+import CommonMath (loopToRange, newtonsMethod)
 
 meAn2EcAn :: RealFloat a => a -> a -> a
-meAn2EcAn ec meAn = foo e
+meAn2EcAn ec meAn = ecAn
   where
     meAn' = loopToRange (-pi) pi meAn
-    e = if (meAn' > -pi && meAn' < 0) || (meAn' > pi)
+    e = if meAn' < 0
          then meAn' - ec
          else meAn' + ec
-    foo oldE = finalE
-      where newE = oldE + (meAn' - oldE + ec * sin oldE) / (1 - ec * cos oldE)
-            finalE = if abs (newE - oldE) > 1e-6
-                      then foo newE
-                      else newE
+    ecAn = newtonsMethod (\_E -> _E - ec * sin _E - meAn')
+                         (\_E -> 1 - ec * cos _E) e 1e-12
 
 ecAn2TrueAn :: RealFloat a => a -> a -> a
 ecAn2TrueAn ec ecAn =
@@ -33,6 +30,7 @@ trueAn2EcAn ec trueAn =
         ((ec + cos trueAn ) / x)
   where x = 1 + ec * cos trueAn
 
+-- ecAn2MeAn A.K.A Kepler's Equation
 ecAn2MeAn :: RealFloat a => a -> a -> a
 ecAn2MeAn ec ecAn = ecAn - ec * sin ecAn
 

@@ -16,7 +16,7 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Sgp4, Sgp4.Unit, Sgp4.Io, Sgp4.Ext, AnomalyConversions
+  exposed-modules:     Sgp4, Sgp4.Unit, Sgp4.Io, Sgp4.Ext, AnomalyConversions, Tests
   other-modules:       CommonMath
   other-extensions:    TemplateHaskell
   build-depends:       base >=4.8 && <4.9, lens >=4.15 && <4.16, regex-tdfa
