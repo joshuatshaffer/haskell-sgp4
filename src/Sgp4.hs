@@ -1,27 +1,20 @@
-{-# LANGUAGE TemplateHaskell #-}
-
 module Sgp4 where
-import Control.Lens
 
--- line :: LocVars -> LocVars
--- expr :: LocVars -> value
--- opper :: expr -> expr -> expr
--- assign :: expr -> var -> line
+data SGP4Error = SGP4Error1 | SGP4Error2 | SGP4Error3 | SGP4Error4 | SGP4Error5 | SGP4Error6
 
-data Point = Point {_x :: Double, _y :: Double} deriving (Show, Eq)
+instance Show SGP4Error where
+  show SGP4Error1 = "mean elements, ecc >= 1.0 or ecc < -0.001 or a < 0.95"
+  show SGP4Error2 = "mean motion less than 0.0"
+  show SGP4Error3 = "pert elements, ecc < 0.0  or  ecc > 1.0"
+  show SGP4Error4 = "semi-latus rectum < 0.0"
+  show SGP4Error5 = "epoch elements are sub-orbital"
+  show SGP4Error6 = "satellite has decayed"
 
-makeLenses ''Point
+parceTLE :: String -> String -> TLE
+parceTLE = undefined
 
-va v l = view v l
-li a _ = a
+sgp4init :: TLE -> Either SGP4Error Elsetrec
+sgp4init = undefined
 
-(.+) a b l = a l + b l
-(.-) a b l = a l - b l
-(.*) a b l = a l * b l
-(./) a b l = a l / b l
-(.=) v e l = set v (e l)
-
-(.:) :: (a -> a) -> (a -> a) -> (a -> a)
-(.:) = flip (.)
-
-testPoint = set x 2 . set y 3 $ Point 0 0
+sgp4 :: Elsetrec -> Time -> Either SGP4Error (Position, Velocity, Elsetrec)
+sgp4 = undefined
