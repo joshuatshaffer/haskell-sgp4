@@ -1,22 +1,21 @@
--- Originally for MATLAB by Luis Baars
--- Translated to Haskell by Joshua Shaffer
-
 module AnomalyConversions
     (meAn2EcAn, ecAn2TrueAn
     ,trueAn2EcAn, ecAn2MeAn
     ,meAn2TrueAn, trueAn2MeAn
     ) where
+
 import CommonMath (loopToRange, newtonsMethod)
 
 meAn2EcAn :: RealFloat a => a -> a -> a
 meAn2EcAn ec meAn = ecAn
   where
     meAn' = loopToRange (-pi) pi meAn
-    e = if meAn' < 0
+    ecAn0 = if meAn' < 0
          then meAn' - ec
          else meAn' + ec
-    ecAn = newtonsMethod (\_E -> _E - ec * sin _E - meAn')
-                         (\_E -> 1 - ec * cos _E) e 1e-12
+    -- Solve Kepler's Equation
+    ecAn = newtonsMethod (\x -> x - ec * sin x - meAn')
+                         (\x -> 1 - ec * cos x) ecAn0 1e-12
 
 ecAn2TrueAn :: RealFloat a => a -> a -> a
 ecAn2TrueAn ec ecAn =

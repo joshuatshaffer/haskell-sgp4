@@ -1,7 +1,6 @@
-module Sgp4.Io (twoline2rv, tlePatternLn1, tlePatternLn2, parceTLE) where
+module TwoLineElement (tlePatternLn1, tlePatternLn2, parceTLE) where
 
 -- import Sgp4.Ext -- for several misc routines
-import           Sgp4.Unit       (Elsetrec, GravityConsts, sgp4init)
 import           Text.Regex.TDFA
 
 angVelOfE = (2 * pi) / minPerDay -- rad / min
@@ -37,9 +36,6 @@ data TLE = TLE
   ,_checksumL1   :: Int
   ,_checksumL2   :: Int
   } deriving (Show, Eq)
-
-twoline2rv :: String -> String -> Char -> Char -> Char -> GravityConsts -> (Double,Double,Double, Elsetrec)
-twoline2rv ln1 ln2 typerun typeinput opsmode whichconst = undefined
 
 -- "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927"
 -- "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"
