@@ -1,30 +1,42 @@
 module Sgp4.Io (twoline2rv, tlePatternLn1, tlePatternLn2, parceTLE) where
 
 -- import Sgp4.Ext -- for several misc routines
-import Sgp4.Unit (GravityConsts,Elsetrec,sgp4init)
-import Text.Regex.TDFA
+import           Sgp4.Unit       (Elsetrec, GravityConsts, sgp4init)
+import           Text.Regex.TDFA
 
-data TLE = TLE
-  {satelliteNum :: Int
-  ,classification :: Char
-  ,internationalDesignator :: String
-  ,epochYear :: Int
-  ,epochDay :: Double
-  ,meanMotionDt1 :: Double
-  ,meanMotionDt2 :: Double
-  ,bStar :: Double
-  ,elementNum :: Int
-  ,checksumL1 :: Int
-  ,inclination :: Double
-  ,raan :: Double
-  ,eccentricity :: Double
-  ,argOfPeri :: Double
-  ,meanAnomaly :: Double
-  ,meanMotion :: Double
-  ,revolutionNumber :: Int
-  ,checksumL2 :: Int
+angVelOfE = (2 * pi) / minPerDay -- rad / min
+minPerDay = 24 * 60.0
+deg2rad = (*) (pi/180)
+
+data Satellite = Satellite
+  {_satName                    :: String
+  ,_satNumber                  :: Int
+  ,_satClass                   :: Char
+  ,_satInternationalDesignator :: String
+  ,_satOrbit                   :: Orbit
   } deriving (Show, Eq)
 
+data Orbit = Orbit
+  {_epochYear        :: Int
+  ,_epochDay         :: Double
+  ,_eccentricity     :: Double  -- e
+  ,_inclination      :: Double  -- i  -- radians
+  ,_raan             :: Double  -- Ω  -- radians
+  ,_argOfPeri        :: Double  -- ω  -- radians
+  ,_meanMotion       :: Double  -- n  -- radians per minute
+  ,_meanMotionDt1    :: Double
+  ,_meanMotionDt2    :: Double
+  ,_meanAnomaly      :: Double  -- M0 -- radians
+  ,_bStar            :: Double  -- B* -- inverse earth radii
+  ,_revolutionNumber :: Int
+  } deriving (Show, Eq)
+
+data TLE = TLE
+  {_tleSatellite :: Satellite
+  ,_elementNum   :: Int
+  ,_checksumL1   :: Int
+  ,_checksumL2   :: Int
+  } deriving (Show, Eq)
 
 twoline2rv :: String -> String -> Char -> Char -> Char -> GravityConsts -> (Double,Double,Double, Elsetrec)
 twoline2rv ln1 ln2 typerun typeinput opsmode whichconst = undefined
@@ -41,41 +53,46 @@ charClassAliases 'A' = "[A-Z ]"
 charClassAliases '+' = "[-+ ]"
 charClassAliases '-' = "[-+]"
 charClassAliases '.' = "\\."
-charClassAliases x = [x]
+charClassAliases x   = [x]
 
 tlePatternLn1, tlePatternLn2 :: String
 tlePatternLn1 = concatMap charClassAliases "1 (N{5})(C) (N{5}A{3}) (N{2})(N{3}.N{8}) (+.N{8}) (+N{5}-N) (+N{5}-N) 0 (N{4})(N)"
 tlePatternLn2 = concatMap charClassAliases "2 (N{5}) (N{3}.N{4}) (N{3}.N{4}) (N{7}) (N{3}.N{4}) (N{3}.N{4}) (N{2}.N{8})(N{5})(N)"
 
-parceTLE :: String -> String -> TLE
-parceTLE ln1 ln2 = TLE
-  satelliteNum classification internationalDesignator
-  epochYear epochDay meanMotionDt1 meanMotionDt2 bStar
-  elementNum checksumL1 inclination raan eccentricity
-  argOfPeri meanAnomaly meanMotion revolutionNumber
-  checksumL2
+parceTLE :: String -> String -> String -> TLE
+parceTLE n ln1 ln2 = tle
   where
-    satelliteNum = read $ head l1m
-    classification = head $ l1m !! 1
-    internationalDesignator = l1m !! 2
-    epochYear = read $ l1m !! 3
-    epochDay = read $ l1m !! 4
-    meanMotionDt1 = read . (\(x:xs)->x:'0':xs) $ l1m !! 5
-    meanMotionDt2 = read . pudunk $ l1m !! 6
-    bStar = read . pudunk $ l1m !! 7
-    elementNum = read $ l1m !! 8
-    checksumL1 = read $ l1m !! 9
-    inclination = read $ l2m !! 1
-    raan = read $ l2m !! 2
-    eccentricity = read . ("0."++) $ l2m !! 3
-    argOfPeri = read $ l2m !! 4
-    meanAnomaly = read $ l2m !! 5
-    meanMotion = read $ l2m !! 6
-    revolutionNumber = read $ l2m !! 7
-    checksumL2 = read $ l2m !! 8
+    tle = TLE
+      {_tleSatellite = sat
+      ,_elementNum = read $ l1m !! 8
+      ,_checksumL1 = read $ l1m !! 9
+      ,_checksumL2 = read $ l2m !! 8
+      }
+    sat = Satellite
+      {_satName = n
+      ,_satNumber = read $ head l1m
+      ,_satClass = head $ l1m !! 1
+      ,_satInternationalDesignator = l1m !! 2
+      ,_satOrbit = orb
+      }
+    orb = Orbit
+      {_epochYear = (\y -> if y < 57 then y + 2000 else y + 1900) . read $ l1m !! 3
+      ,_epochDay = read $ l1m !! 4
+      ,_eccentricity = read . ("0."++) $ l2m !! 3
+      ,_inclination = deg2rad . read $ l2m !! 1
+      ,_raan = deg2rad . read $ l2m !! 2
+      ,_argOfPeri = deg2rad . read $ l2m !! 4
+      ,_meanMotion = (*) angVelOfE . read $ l2m !! 6
+      ,_meanMotionDt1 = (/) minPerDay . (*) angVelOfE . read . (\(x:xs)->x:'0':xs) $ l1m !! 5
+      ,_meanMotionDt2 = (/) (minPerDay**2) . (*) angVelOfE . read . pudunk $ l1m !! 6
+      ,_meanAnomaly = deg2rad . read $ l2m !! 5
+      ,_bStar = read . pudunk $ l1m !! 7
+      ,_revolutionNumber = read $ l2m !! 7
+      }
 
     (_,_,_,l1m) = ln1 =~ tlePatternLn1 :: (String,String,String,[String])
     (_,_,_,l2m) = ln2 =~ tlePatternLn2 :: (String,String,String,[String])
 
+    -- "-12345-6" -> "-0.12345e-6"
     pudunk :: String -> String
     pudunk s = head s : "0." ++ drop 1 (take 5 s) ++ "e" ++ drop 6 s

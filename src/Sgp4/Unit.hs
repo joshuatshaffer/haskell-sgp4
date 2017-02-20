@@ -17,6 +17,8 @@ sgp4Version = "SGP4 Version 2011-12-30"
 data GravityConsts = GravityConsts
   {_tumin, _mu, _radiusearthkm, _xke, _j2, _j3, _j4, _j3oj2 :: Double}
 
+data ResonanceFlag = NoRez | OneDayRez | HalfDayRez deriving (Show,Eq)
+
 data Elsetrec = Elsetrec
   {_satnum :: Integer -- long int in c++
   ,_epochyr, _epochtynumrev :: Int
@@ -32,7 +34,7 @@ data Elsetrec = Elsetrec
   ,_nodecf :: Double
 
   -- Deep Space --
-  ,_irez :: Int
+  ,_irez :: ResonanceFlag
   ,_d2201  , _d2211  , _d3210  , _d3222    , _d4410  , _d4422   , _d5220 , _d5232 :: Double
   ,_d5421  , _d5433  , _dedt   , _del1     , _del2   , _del3    , _didt  , _dmdt  :: Double
   ,_dnodt  , _domdt  , _e3     , _ee2      , _peo    , _pgho    , _pho   , _pinco :: Double
