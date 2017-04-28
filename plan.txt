@@ -1,0 +1,8 @@
+basic Haskell+Cabal project
+primitive C call (Double -> Double -> Double)
+C structs
+C enums
+primitive C++ call
+C++ structs (elsetrec)
+C++ enums (gravconsttype)
+SGP4 in Haskell
