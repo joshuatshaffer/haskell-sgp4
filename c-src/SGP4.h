@@ -50,9 +50,8 @@
 #pragma once
 
 // using namespace System;
-
-#include <iostream>
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -60,7 +59,7 @@
 
 // -------------------------- structure declarations
 // ----------------------------
-typedef enum { wgs72old, wgs72, wgs84 } gravconsttype;
+typedef enum gravconsttype { wgs72old, wgs72, wgs84 } gravconsttype;
 
 typedef struct elsetrec {
     long int satnum;
@@ -106,61 +105,22 @@ typedef struct elsetrec {
 
 } elsetrec;
 
-namespace SGP4Funcs {
+bool SGP4Funcs_sgp4init (gravconsttype whichconst, char opsmode, const int satn,
+                         const double epoch, const double xbstar,
+                         const double xndot, const double xnddot,
+                         const double xecco, const double xargpo,
+                         const double xinclo, const double xmo,
+                         const double xno, const double xnodeo,
+                         elsetrec *satrec);
 
-//	public class SGP4Class
-//	{
-
-bool sgp4init (gravconsttype whichconst, char opsmode, const int satn,
-               const double epoch, const double xbstar, const double xndot,
-               const double xnddot, const double xecco, const double xargpo,
-               const double xinclo, const double xmo, const double xno,
-               const double xnodeo, elsetrec &satrec);
-
-bool sgp4 (
+bool SGP4Funcs_sgp4 (
     // no longer need gravconsttype whichconst, all data contained in satrec
-    elsetrec &satrec, double tsince, double r[3], double v[3]);
+    elsetrec *satrec, double tsince, double r[3], double v[3]);
 
-void getgravconst (gravconsttype whichconst, double &tumin, double &mu,
-                   double &radiusearthkm, double &xke, double &j2, double &j3,
-                   double &j4, double &j3oj2);
+void SGP4Funcs_getgravconst (gravconsttype whichconst, double *tumin,
+                             double *mu, double *radiusearthkm, double *xke,
+                             double *j2, double *j3, double *j4, double *j3oj2);
 
-// older sgp4io methods
-void twoline2rv (char longstr1[130], char longstr2[130], char typerun,
-                 char typeinput, char opsmode, gravconsttype whichconst,
-                 double &startmfe, double &stopmfe, double &deltamin,
-                 elsetrec &satrec);
-
-// older sgp4ext methods
-double gstime (double jdut1);
-
-double sgn (double x);
-
-double mag (double x[3]);
-
-void cross (double vec1[3], double vec2[3], double outvec[3]);
-
-double dot (double x[3], double y[3]);
-
-double angle (double vec1[3], double vec2[3]);
-
-void newtonnu (double ecc, double nu, double &e0, double &m);
-
-double asinh (double xval);
-
-void rv2coe (double r[3], double v[3], const double mu, double &p, double &a,
-             double &ecc, double &incl, double &omega, double &argp, double &nu,
-             double &m, double &arglat, double &truelon, double &lonper);
-
-void jday (int year, int mon, int day, int hr, int minute, double sec,
-           double &jd, double &jdFrac);
-
-void days2mdhms (int year, double days, int &mon, int &day, int &hr,
-                 int &minute, double &sec);
-
-void invjday (double jd, double jdFrac, int &year, int &mon, int &day, int &hr,
-              int &minute, double &sec);
-
-} // namespace
+double SGP4Funcs_gstime (double jdut1);
 
 #endif
