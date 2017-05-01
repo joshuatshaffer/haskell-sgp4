@@ -59,9 +59,9 @@
 
 // -------------------------- structure declarations
 // ----------------------------
-typedef enum gravconsttype { wgs72old, wgs72, wgs84 } gravconsttype;
+enum gravconsttype { wgs72old, wgs72, wgs84 };
 
-typedef struct elsetrec {
+struct elsetrec {
     long int satnum;
     int epochyr, epochtynumrev;
     int error;
@@ -102,22 +102,21 @@ typedef struct elsetrec {
     unsigned char active;      // "Active S/C" flag (0=n, 1=y)
     unsigned char not_orbital; // "Orbiting S/C" flag (0=n, 1=y)
     double rcs_m2;             // "RCS (m^2)" storage
+};
 
-} elsetrec;
-
-bool SGP4Funcs_sgp4init (gravconsttype whichconst, char opsmode, const int satn,
-                         const double epoch, const double xbstar,
-                         const double xndot, const double xnddot,
-                         const double xecco, const double xargpo,
-                         const double xinclo, const double xmo,
-                         const double xno, const double xnodeo,
-                         elsetrec *satrec);
+bool SGP4Funcs_sgp4init (enum gravconsttype whichconst, char opsmode,
+                         const int satn, const double epoch,
+                         const double xbstar, const double xndot,
+                         const double xnddot, const double xecco,
+                         const double xargpo, const double xinclo,
+                         const double xmo, const double xno,
+                         const double xnodeo, struct elsetrec *satrec);
 
 bool SGP4Funcs_sgp4 (
     // no longer need gravconsttype whichconst, all data contained in satrec
-    elsetrec *satrec, double tsince, double r[3], double v[3]);
+    struct elsetrec *satrec, double tsince, double r[3], double v[3]);
 
-void SGP4Funcs_getgravconst (gravconsttype whichconst, double *tumin,
+void SGP4Funcs_getgravconst (enum gravconsttype whichconst, double *tumin,
                              double *mu, double *radiusearthkm, double *xke,
                              double *j2, double *j3, double *j4, double *j3oj2);
 
