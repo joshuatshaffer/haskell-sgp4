@@ -1316,13 +1316,13 @@ static void initl (
 *    vallado, crawford, hujsak, kelso  2006
 ----------------------------------------------------------------------------*/
 
-bool SGP4Funcs_sgp4init (enum gravconsttype whichconst, char opsmode,
-                         const int satn, const double epoch,
-                         const double xbstar, const double xndot,
-                         const double xnddot, const double xecco,
-                         const double xargpo, const double xinclo,
-                         const double xmo, const double xno_kozai,
-                         const double xnodeo, struct elsetrec *satrec) {
+struct elsetrec *
+SGP4Funcs_sgp4init (enum gravconsttype whichconst, char opsmode, const int satn,
+                    const double epoch, const double xbstar, const double xndot,
+                    const double xnddot, const double xecco,
+                    const double xargpo, const double xinclo, const double xmo,
+                    const double xno_kozai, const double xnodeo) {
+    struct elsetrec *satrec = malloc (sizeof (struct elsetrec));
     /* --------------------- local variables ------------------------ */
     double ao, ainv, con42, cosio, sinio, cosio2, eccsq, omeosq, posq, rp,
         rteosq, cnodm, snodm, cosim, sinim, cosomm, sinomm, cc1sq, cc2, cc3,
@@ -1665,7 +1665,7 @@ bool SGP4Funcs_sgp4init (enum gravconsttype whichconst, char opsmode,
 
     //#include "debug6.cpp"
     // sgp4fix return boolean. satrec->error contains any error codes
-    return true;
+    return satrec;
 } // SGP4Funcs_sgp4init
 
 /*-----------------------------------------------------------------------------

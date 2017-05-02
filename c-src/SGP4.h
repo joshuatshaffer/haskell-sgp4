@@ -104,13 +104,13 @@ struct elsetrec {
     double rcs_m2;             // "RCS (m^2)" storage
 };
 
-bool SGP4Funcs_sgp4init (enum gravconsttype whichconst, char opsmode,
-                         const int satn, const double epoch,
-                         const double xbstar, const double xndot,
-                         const double xnddot, const double xecco,
-                         const double xargpo, const double xinclo,
-                         const double xmo, const double xno,
-                         const double xnodeo, struct elsetrec *satrec);
+struct elsetrec *SGP4Funcs_sgp4init (enum gravconsttype whichconst,
+                                     char opsmode, const int satn,
+                                     const double epoch, const double xbstar,
+                                     const double xndot, const double xnddot,
+                                     const double xecco, const double xargpo,
+                                     const double xinclo, const double xmo,
+                                     const double xno, const double xnodeo);
 
 bool SGP4Funcs_sgp4 (
     // no longer need gravconsttype whichconst, all data contained in satrec
