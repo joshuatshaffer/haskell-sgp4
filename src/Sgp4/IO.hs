@@ -1,27 +1,21 @@
 module Sgp4.IO where
 
 import Text.Regex.TDFA
+import Sgp4.Types
 
-data TLE = TLE
-  {satelliteNum :: Int
-  ,classification :: Char
-  ,internationalDesignator :: String
-  ,epochYear :: Int
-  ,epochDay :: Double
-  ,meanMotionDt1 :: Double
-  ,meanMotionDt2 :: Double
-  ,bStar :: Double
-  ,elementNum :: Int
-  ,checksumL1 :: Int
-  ,inclination :: Double
-  ,raan :: Double
-  ,eccentricity :: Double
-  ,argOfPeri :: Double
-  ,meanAnomaly :: Double
-  ,meanMotion :: Double
-  ,revolutionNumber :: Int
-  ,checksumL2 :: Int
-  } deriving (Show, Eq)
+sgp4OrbitFromTLE :: TLE -> Orbit
+sgp4OrbitFromTLE (TLE _ _ _ epochYear epochDay n' n'' bStar _ _ i _Ω e ω m0 n _ _) =
+  (Sgp4Orbit e
+             (i * pi / 180.0)
+             (_Ω * pi / 180.0)
+             (ω * pi / 180.0)
+             (n * 2 * pi / 1440.0)
+             (n' * 2 * pi / 1440.0**2)
+             (n'' * 2 * pi / 1440.0**3)
+             (m0 * pi / 180.0)
+             (bStar)
+             (21448.517825) --(satrec.jdsatepoch + satrec.jdsatepochF) - 2433281.5
+             )
 
 -- "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927"
 -- "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"
@@ -42,32 +36,26 @@ tlePatternLn1 = concatMap charClassAliases "1 (N{5})(C) (N{5}A{3}) (N{2})(N{3}.N
 tlePatternLn2 = concatMap charClassAliases "2 (N{5}) (N{3}.N{4}) (N{3}.N{4}) (N{7}) (N{3}.N{4}) (N{3}.N{4}) (N{2}.N{8})(N{5})(N)"
 
 parceTLE :: String -> String -> TLE
-parceTLE ln1 ln2 = TLE
-  satelliteNum classification internationalDesignator
-  epochYear epochDay meanMotionDt1 meanMotionDt2 bStar
-  elementNum checksumL1 inclination raan eccentricity
-  argOfPeri meanAnomaly meanMotion revolutionNumber
-  checksumL2
+parceTLE ln1 ln2 = (TLE (read $ head l1m)
+                       (head $ l1m !! 1)
+                       (l1m !! 2)
+                       ((\x -> if x < 57 then x+2000 else x + 1900) . read $ l1m !! 3)
+                       (read $ l1m !! 4)
+                       (read . (\(x:xs)->x:'0':xs) $ l1m !! 5)
+                       (read . pudunk $ l1m !! 6)
+                       (read . pudunk $ l1m !! 7)
+                       (read $ l1m !! 8)
+                       (read $ l1m !! 9)
+                       (read $ l2m !! 1)
+                       (read $ l2m !! 2)
+                       (read . ("0."++) $ l2m !! 3)
+                       (read $ l2m !! 4)
+                       (read $ l2m !! 5)
+                       (read $ l2m !! 6)
+                       (read $ l2m !! 7)
+                       (read $ l2m !! 8)
+                           )
   where
-    satelliteNum = read $ head l1m
-    classification = head $ l1m !! 1
-    internationalDesignator = l1m !! 2
-    epochYear = (\x -> if x < 57 then x+2000 else x + 1900) . read $ l1m !! 3
-    epochDay = read $ l1m !! 4
-    meanMotionDt1 = (/(1440.0**2 / (2*pi))) . read . (\(x:xs)->x:'0':xs) $ l1m !! 5
-    meanMotionDt2 = (/(1440.0**3 / (2*pi))) . read . pudunk $ l1m !! 6
-    bStar = read . pudunk $ l1m !! 7
-    elementNum = read $ l1m !! 8
-    checksumL1 = read $ l1m !! 9
-    inclination = (*) (pi / 180.0) . read $ l2m !! 1
-    raan = (*) (pi / 180.0) . read $ l2m !! 2
-    eccentricity = read . ("0."++) $ l2m !! 3
-    argOfPeri = (*) (pi / 180.0) . read $ l2m !! 4
-    meanAnomaly = (*) (pi / 180.0) . read $ l2m !! 5
-    meanMotion = (/(1440.0 / (2*pi))) . read $ l2m !! 6
-    revolutionNumber = read $ l2m !! 7
-    checksumL2 = read $ l2m !! 8
-
     (_,_,_,l1m) = ln1 =~ tlePatternLn1 :: (String,String,String,[String])
     (_,_,_,l2m) = ln2 =~ tlePatternLn2 :: (String,String,String,[String])
 
