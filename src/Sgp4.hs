@@ -6,19 +6,20 @@ import Sgp4.IO
 import Sgp4.Types
 
 import System.IO.Unsafe (unsafePerformIO)
+import Foreign.ForeignPtr
 
 {------------------------------- Main Goals ---------------------------------}
 
-initSgp4 :: Orbit -> ElsetrecPtr
+initSgp4 :: Orbit -> ForeignPtr Elsetrec
 initSgp4 (Sgp4Orbit e i _Ω ω n n' n'' m0 bStar epoch) =
-  unsafePerformIO $ raw_sgp4init Wgs84 'i' 0 epoch bStar n' n'' e ω i m0 n _Ω
+  unsafePerformIO $ raw_sgp4init Wgs84 'i' 0 epoch bStar n' n'' e ω i m0 n _Ω >>= newForeignPtr p_free
 
-propagateSgp4 :: ElsetrecPtr -> Propagator
-propagateSgp4 elsetrec t = unsafePerformIO $ do
-  (isOk,r,v) <- raw_sgp4 elsetrec t
-  return $ if isOk
-            then Orbiting r v
-            else Decayed
+propagateSgp4 :: ForeignPtr Elsetrec -> Propagator
+propagateSgp4 elsetrec' t = unsafePerformIO $ withForeignPtr elsetrec' bod
+  where bod elsetrec = do (isOk,r,v) <- raw_sgp4 elsetrec t
+                          return $ if isOk
+                            then Orbiting r v
+                            else Decayed
 
 propagateTLE :: String -> String -> Propagator
 propagateTLE l1 l2 = propagateSgp4 $ initSgp4 $ sgp4OrbitFromTLE $ parceTLE l1 l2

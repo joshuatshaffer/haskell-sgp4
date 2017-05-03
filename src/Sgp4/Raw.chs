@@ -3,7 +3,7 @@
 module Sgp4.Raw where
 
 import Sgp4.Types
-import Foreign.Ptr (Ptr)
+import Foreign.Ptr (Ptr,FunPtr)
 import Foreign.C.Types
 import Control.Applicative ((<$>))
 import Foreign.Marshal.Array (peekArray,mallocArray)
@@ -35,3 +35,6 @@ raw_sgp4 elsetrec t =
 
 cDoubleConv :: CDouble -> Double
 cDoubleConv (CDouble x) = x
+
+foreign import ccall "stdlib.h &free"
+  p_free :: FunPtr (Ptr a -> IO ())
