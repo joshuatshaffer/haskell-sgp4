@@ -14,8 +14,45 @@ sgp4OrbitFromTLE (TLE _ _ _ epochYear epochDay n' n'' bStar _ _ i _Ω e ω m0 n 
              (n'' * 2 * pi / 1440.0**3)
              (m0 * pi / 180.0)
              (bStar)
-             (21448.517825) --(satrec.jdsatepoch + satrec.jdsatepochF) - 2433281.5
+             (jday epochYear (days2mdhms epochYear epochDay) - 2433281.5)
              )
+
+
+days2mdhms :: Int -> Double -> (Int,Int,Int,Int,Double)
+days2mdhms year days = (mon, day, hr, minute, sec)
+  where
+    lmonth :: [Int]
+    lmonth = [0, 31, if (year `mod` 4) == 0 then 29 else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    (dayofyr,days') = properFraction days
+
+    mownow = takeWhile (<dayofyr) $ scanl1 (+) lmonth
+    mon = length mownow
+    day = dayofyr - last mownow
+
+    (hr, fhr) = properFraction (days' * 24.0)
+    (minute, mhr) = properFraction (fhr * 60.0)
+    sec = mhr * 60.0
+
+fFloor :: (RealFrac a, Num b) => a -> b
+fFloor = fromIntegral . floor
+
+jday :: Int -> (Int,Int,Int,Int,Double) -> Double
+jday year (mon, day, hr, minute, sec) = jd + jdFrac
+  where
+    fYear = fromIntegral year
+    fMon = fromIntegral mon
+    fDay = fromIntegral day
+    fHr = fromIntegral hr
+    fMinute = fromIntegral minute
+
+    jd :: Double
+    jd = 367.0 * fYear -
+        fFloor ((7 * (fYear + fFloor ((fMon + 9) / 12.0))) * 0.25) +
+        fFloor (275 * fMon / 9.0) +
+        fDay + 1721013.5  -- use - 678987.0 to go to mjd directly
+    jdFrac :: Double
+    jdFrac = (sec + fMinute * 60.0 + fHr * 3600.0) / 86400.0
 
 -- "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927"
 -- "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"

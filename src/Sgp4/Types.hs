@@ -20,7 +20,6 @@ data SatID = SatCatNum Int
     deriving (Show)
 
 data TLE = TLE Int Char String Int Double Double Double Double Int Int Double Double Double Double Double Double Int Int
-         | Sgp4TLE Orbit SatID Int
   deriving (Show)
 --(RawTLE satNum classification internationalDesignator epochYear epochDay meanMotionDt1 meanMotionDt2 bStar elementNum checksumL1 inclination raan eccentricity argOfPeri meanAnomaly meanMotion revolutionNumber checksumL2)
 
