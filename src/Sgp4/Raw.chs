@@ -7,7 +7,6 @@ import Foreign.Ptr (Ptr)
 import Foreign.C.Types
 import Control.Applicative ((<$>))
 import Foreign.Marshal.Array (peekArray,mallocArray)
-import System.IO.Unsafe (unsafePerformIO)
 
 #include "wrapper.h"
 #include "SGP4.h"

@@ -11,16 +11,16 @@ type Epoch = Double
 type BStar = Double
 
 data Orbit = Sgp4Orbit Eccentricity Inclination RAAN ArgPeriapsis MeanMotion MeanMotion MeanMotion MeanAnomaly BStar Epoch
-  deriving (Show)
+  deriving (Show, Eq)
 --(Sgp4Orbit e i _Ω ω n n' n'' m0 bStar epoch)
 
 data SatID = SatCatNum Int
            | SatName String
            | SatIntDes String
-    deriving (Show)
+    deriving (Show, Eq)
 
 data TLE = TLE Int Char String Int Double Double Double Double Int Int Double Double Double Double Double Double Int Int
-  deriving (Show)
+  deriving (Show, Eq)
 --(RawTLE satNum classification internationalDesignator epochYear epochDay meanMotionDt1 meanMotionDt2 bStar elementNum checksumL1 inclination raan eccentricity argOfPeri meanAnomaly meanMotion revolutionNumber checksumL2)
 
 data Satellite = Sat SatID Orbit
@@ -29,5 +29,5 @@ type Time = Double
 type Position = (Double,Double,Double)
 type Velocity = (Double,Double,Double)
 
-data SatStatus = Orbiting Position Velocity | Decayed deriving (Show)
+data SatStatus = Orbiting Position Velocity | Decayed deriving (Show, Eq)
 type Propagator = Time -> SatStatus
