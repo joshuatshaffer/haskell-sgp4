@@ -4,13 +4,14 @@
 #include <stdio.h>
 
 #define F "%+11e"
+#define FORMAT F " " F " " F " " F " " F " " F " " F "\n"
 
 int main (int argc, char *argv[]) {
     char *line1 = argv[1];
     char *line2 = argv[2];
-    double start_time = atof (argv[3]);
-    double end_time = atof (argv[4]);
-    double time_step = atof (argv[5]);
+    double start_time = -1440;
+    double end_time = 1440;
+    double time_step = 10;
 
     double a;
     elsetrec satrec;
@@ -19,8 +20,7 @@ int main (int argc, char *argv[]) {
     double r[3], v[3];
     for (double t = start_time; t <= end_time; t += time_step) {
         SGP4Funcs::sgp4 (satrec, t, r, v);
-        printf (F " " F " " F " " F " " F " " F " " F "\n", t, r[0], r[1], r[2], v[0], v[1],
-                v[2]);
+        printf (FORMAT, t, r[0], r[1], r[2], v[0], v[1], v[2]);
     }
 
     return 0;
