@@ -1,10 +1,15 @@
 
-#include "SGP4.h"
+#include "orig-sgp4/SGP4.h"
 
-#include <stdio.h>
+#include <iomanip>
+#include <iostream>
+#include <limits>
 
-#define F "%+11e"
-#define FORMAT F " " F " " F " " F " " F " " F " " F "\n"
+using namespace std;
+
+#define FORMAT                                                                 \
+    std::setprecision (std::numeric_limits<double>::max_digits10)              \
+        << std::scientific
 
 int main (int argc, char *argv[]) {
     char *line1 = argv[1];
@@ -20,8 +25,13 @@ int main (int argc, char *argv[]) {
     double r[3], v[3];
     for (double t = start_time; t <= end_time; t += time_step) {
         SGP4Funcs::sgp4 (satrec, t, r, v);
-        printf (FORMAT, t, r[0], r[1], r[2], v[0], v[1], v[2]);
+        cout << FORMAT << t << " ";
+        cout << FORMAT << r[0] << " ";
+        cout << FORMAT << r[1] << " ";
+        cout << FORMAT << r[2] << " ";
+        cout << FORMAT << v[0] << " ";
+        cout << FORMAT << v[1] << " ";
+        cout << FORMAT << v[2] << endl;
     }
-
     return 0;
 }
