@@ -5,6 +5,7 @@ import Control.Arrow ((&&&))
 import Text.Printf (printf)
 import System.Process (runInteractiveCommand)
 import System.IO (hGetContents)
+import Control.Exception (catch, SomeException)
 
 type Ephemeris = [(Time, SatStatus)]
 
@@ -46,5 +47,8 @@ diffEphe (ln1,ln2) = do
 
 main :: IO ()
 main = do
-  s <- readFile "test-stuff/SGP4-VER.TLE"
-  mapM_ diffEphe $ readVerTLE s
+    s <- readFile "test-stuff/SGP4-VER.TLE"
+    mapM_ (\x -> catch (diffEphe x) handler) $ readVerTLE s
+  where
+    handler :: SomeException -> IO ()
+    handler ex = putStrLn $ "Caught exception: " ++ show ex
