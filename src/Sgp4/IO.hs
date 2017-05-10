@@ -7,17 +7,18 @@ import Sgp4.Ext
 sgp4OrbitFromTLE :: TLE -> Orbit
 sgp4OrbitFromTLE (TLE _ _ _ epochYear epochDay n' n'' bStar _ _ i _Ω e ω m0 n _ _) =
    Sgp4Orbit e
-             (i * pi / 180.0)
-             (_Ω * pi / 180.0)
-             (ω * pi / 180.0)
+             (i * deg2rad)
+             (_Ω * deg2rad)
+             (ω * deg2rad)
              (n / xpdotp)
              (n' / (xpdotp * 1440.0))
              (n'' / (xpdotp * 1440.0 * 1440))
-             (m0 * pi / 180.0)
+             (m0 * deg2rad)
              bStar
              (jday epochYear (days2mdhms epochYear epochDay) - 2433281.5)
   where
-    xpdotp :: Double
+    deg2rad, xpdotp :: Double
+    deg2rad = pi / 180.0
     xpdotp = 1440.0 / (2.0 * pi)
 
 -- "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927"
