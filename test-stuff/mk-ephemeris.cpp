@@ -24,14 +24,17 @@ int main (int argc, char *argv[]) {
 
     double r[3], v[3];
     for (double t = start_time; t <= end_time; t += time_step) {
-        SGP4Funcs::sgp4 (satrec, t, r, v);
-        cout << FORMAT << t << " ";
-        cout << FORMAT << r[0] << " ";
-        cout << FORMAT << r[1] << " ";
-        cout << FORMAT << r[2] << " ";
-        cout << FORMAT << v[0] << " ";
-        cout << FORMAT << v[1] << " ";
-        cout << FORMAT << v[2] << endl;
+        if (SGP4Funcs::sgp4 (satrec, t, r, v)) {
+            cout << FORMAT << t << " ";
+            cout << FORMAT << r[0] << " ";
+            cout << FORMAT << r[1] << " ";
+            cout << FORMAT << r[2] << " ";
+            cout << FORMAT << v[0] << " ";
+            cout << FORMAT << v[1] << " ";
+            cout << FORMAT << v[2] << endl;
+        } else {
+            cout << "Decayed " << satrec.error << endl;
+        }
     }
     return 0;
 }

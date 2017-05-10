@@ -13,7 +13,10 @@ genEphemeris :: String -> String -> Ephemeris
 genEphemeris ln1 ln2 = map (id &&& propagateTLE ln1 ln2) [(-1440),(-1430)..1440]
 
 showEphemeris :: Ephemeris -> String
-showEphemeris = unlines . map (\(t, Orbiting (r1,r2,r3) (v1,v2,v3)) -> printf (unwords $ replicate 7 "%.17e") t r1 r2 r3 v1 v2 v3)
+showEphemeris = unlines . map wank
+  where
+    wank (t, Orbiting (r1,r2,r3) (v1,v2,v3)) = printf (unwords $ replicate 7 "%.17e") t r1 r2 r3 v1 v2 v3
+    wank (t, s) = printf "%.17e" t ++ " " ++ show s
 
 ephemeris2Matrix :: Ephemeris -> [[Double]]
 ephemeris2Matrix = map (\(t, Orbiting (r1,r2,r3) (v1,v2,v3)) -> [t, r1, r2, r3, v1, v2, v3])
@@ -42,7 +45,7 @@ diffEphe (ln1,ln2) = do
   (_,outH,_,_) <- runInteractiveCommand ("./test-stuff/a.out " ++ show ln1 ++ " " ++ show ln2)
   e' <- fmap readEphemeris $ hGetContents outH
   let de = diffEphemeris e e'
-  --putStr $ showEphemeris de
+  putStr $ showEphemeris e
   print . (maximum . map maximum) . ephemeris2Matrix $ de
 
 main :: IO ()

@@ -16,10 +16,10 @@ initSgp4 (Sgp4Orbit e i _Ω ω n n' n'' m0 bStar epoch) =
 
 propagateSgp4 :: ForeignPtr Elsetrec -> Propagator
 propagateSgp4 elsetrec' t = unsafePerformIO $ withForeignPtr elsetrec' bod
-  where bod elsetrec = do (isOk,r,v) <- raw_sgp4 elsetrec t
+  where bod elsetrec = do (isOk,err,r,v) <- raw_sgp4 elsetrec t
                           return $ if isOk
                             then Orbiting r v
-                            else Decayed
+                            else Decayed err
 
 propagateTLE :: String -> String -> Propagator
 propagateTLE l1 l2 = propagateSgp4 $ initSgp4 $ sgp4OrbitFromTLE $ parceTLE l1 l2

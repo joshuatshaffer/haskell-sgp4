@@ -29,5 +29,5 @@ type Time = Double
 type Position = (Double,Double,Double)
 type Velocity = (Double,Double,Double)
 
-data SatStatus = Orbiting Position Velocity | Decayed deriving (Show, Eq)
+data SatStatus = Orbiting Position Velocity | Decayed Int deriving (Show, Eq)
 type Propagator = Time -> SatStatus
