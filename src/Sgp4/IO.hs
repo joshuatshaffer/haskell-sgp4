@@ -1,8 +1,12 @@
-module Sgp4.IO where
+module Sgp4.IO (twoline2rv) where
 
 import Text.Regex.TDFA
 import Sgp4.Types
-import Sgp4.Ext
+import Sgp4.Ext (jday, days2mdhms)
+import Sgp4.Raw (initSgp4, Elsetrec)
+
+twoline2rv :: String -> String -> Elsetrec
+twoline2rv l1 l2 = initSgp4 $ sgp4OrbitFromTLE $ parceTLE l1 l2
 
 sgp4OrbitFromTLE :: TLE -> Orbit
 sgp4OrbitFromTLE (TLE _ _ _ epochYear epochDay n' n'' bStar _ _ i _Ω e ω m0 n _ _) =

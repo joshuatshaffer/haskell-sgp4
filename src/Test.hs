@@ -1,6 +1,7 @@
 
 import Sgp4.Types
-import Sgp4
+import Sgp4.IO
+import Sgp4.Unit
 import Control.Arrow ((&&&))
 import Text.Printf (printf)
 import System.Process (runInteractiveCommand)
@@ -10,7 +11,7 @@ import Control.Exception (catch, SomeException)
 type Ephemeris = [(Time, SatStatus)]
 
 genEphemeris :: String -> String -> Ephemeris
-genEphemeris ln1 ln2 = map (id &&& propagateTLE ln1 ln2) [(-1440),(-1430)..1440]
+genEphemeris ln1 ln2 = map (id &&& sgp4 (twoline2rv ln1 ln2)) [(-1440),(-1430)..1440]
 
 showEphemeris :: Ephemeris -> String
 showEphemeris = unlines . map wank
@@ -45,7 +46,7 @@ diffEphe (ln1,ln2) = do
   (_,outH,_,_) <- runInteractiveCommand ("./test-stuff/a.out " ++ show ln1 ++ " " ++ show ln2)
   e' <- fmap readEphemeris $ hGetContents outH
   let de = diffEphemeris e e'
-  putStr $ showEphemeris e
+  --putStr $ showEphemeris e
   print . (maximum . map maximum) . ephemeris2Matrix $ de
 
 main :: IO ()

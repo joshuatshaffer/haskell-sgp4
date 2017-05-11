@@ -1,5 +1,5 @@
 
-module Sgp4.Ext where
+module Sgp4.Ext (days2mdhms, jday) where
 
 days2mdhms :: Int -> Double -> (Int,Int,Int,Int,Double)
 days2mdhms year days = (mon, day, hr, minute, sec)
