@@ -42,11 +42,7 @@ cIntConv (CInt x) = fromIntegral x
 foreign import ccall "stdlib.h &free"
   p_free :: FunPtr (Ptr a -> IO ())
 
-initSgp4 :: Orbit -> Elsetrec
-initSgp4 (Sgp4Orbit e i _Ω ω n n' n'' m0 bStar epoch) =
-    unsafePerformIO $ raw_sgp4init Wgs84 'i' 0 epoch bStar n' n'' e ω i m0 n _Ω >>= newForeignPtr p_free
-
-propagateSgp4 :: Elsetrec -> Propagator
+propagateSgp4 :: Elsetrec -> Time -> SatStatus
 propagateSgp4 elsetrec' t = unsafePerformIO $ withForeignPtr elsetrec' bod
   where bod elsetrec = do (isOk,err,r,v) <- raw_sgp4 elsetrec t
                           return $ if isOk
