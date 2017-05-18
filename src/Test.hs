@@ -9,7 +9,7 @@ import Control.Exception (catch, SomeException)
 type Ephemeris = [(Time, SatStatus)]
 
 genEphemeris :: String -> String -> Ephemeris
-genEphemeris ln1 ln2 = map (id &&& propagate (twoline2rv ln1 ln2 Wgs84)) [(-1440),(-1430)..1440]
+genEphemeris ln1 ln2 = map (id &&& propagate' (twoline2rv ln1 ln2 Wgs84)) [(-1440),(-1430)..1440]
 
 showEphemeris :: Ephemeris -> String
 showEphemeris = unlines . map wank

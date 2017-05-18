@@ -1317,13 +1317,13 @@ static void initl (
 ----------------------------------------------------------------------------*/
 
 elsetrec_t *SGP4Funcs_sgp4init (gravconst_t whichconst, char opsmode,
-                                const int satn, const double epoch,
-                                const double xbstar, const double xndot,
-                                const double xnddot, const double xecco,
-                                const double xargpo, const double xinclo,
-                                const double xmo, const double xno_kozai,
-                                const double xnodeo) {
-    elsetrec_t *satrec = malloc (sizeof (elsetrec_t));
+                                const double epoch, const double xbstar,
+                                const double xndot, const double xnddot,
+                                const double xecco, const double xargpo,
+                                const double xinclo, const double xmo,
+                                const double xno_kozai, const double xnodeo) {
+    elsetrec_t *satrec = (elsetrec_t *)malloc (sizeof (elsetrec_t));
+    satrec->jdsatepoch = epoch + 2433281.5;
     /* --------------------- local variables ------------------------ */
     double ao, ainv, con42, cosio, sinio, cosio2, eccsq, omeosq, posq, rp,
         rteosq, cnodm, snodm, cosim, sinim, cosomm, sinomm, cc1sq, cc2, cc3,
@@ -1439,7 +1439,6 @@ elsetrec_t *SGP4Funcs_sgp4init (gravconst_t whichconst, char opsmode,
 
     satrec->error = 0;
     satrec->operationmode = opsmode;
-    satrec->satnum = satn;
 
     // sgp4fix - note the following variables are also passed directly via
     // satrec->

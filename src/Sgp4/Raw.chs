@@ -5,6 +5,7 @@ module Sgp4.Raw (Elsetrec
                 ,sgp4init
                 ,sgp4
                 ,p_free
+                ,jdsatepoch
                 ) where
 
 import Foreign.Ptr (Ptr,FunPtr)
@@ -22,7 +23,7 @@ type Elsetrec = ForeignPtr Elsetrec'
 data Elsetrec'
 {#pointer *elsetrec_t as ElsetrecPtr -> Elsetrec' #}
 
-{# fun SGP4Funcs_sgp4init as sgp4init { `Gravconst',`Char',`Int',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double'} -> `ElsetrecPtr' #}
+{# fun SGP4Funcs_sgp4init as sgp4init { `Gravconst',`Char',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double'} -> `ElsetrecPtr' #}
 {# fun SGP4Funcs_sgp4 as sgp4' { `ElsetrecPtr',`Double',id `Ptr C2HSImp.CDouble',id `Ptr C2HSImp.CDouble'} -> `Bool' #}
 
 sgp4 :: ElsetrecPtr -> Double -> IO (Bool,Int,(Double,Double,Double),(Double,Double,Double))
@@ -35,6 +36,9 @@ sgp4 elsetrec t = allocaArray 3 (\r -> allocaArray 3 (\v -> foo r v))
                  return (isOk, fromIntegral err, r', v')
     toTuple :: Ptr CDouble -> IO (Double,Double,Double)
     toTuple p = (map realToFrac <$> peekArray 3 p) >>= (\[a,b,c]->return (a,b,c))
+
+jdsatepoch :: ElsetrecPtr -> IO Double
+jdsatepoch p = realToFrac <$> {#get elsetrec_t->jdsatepoch #} p
 
 foreign import ccall "stdlib.h &free"
   p_free :: FunPtr (Ptr a -> IO ())

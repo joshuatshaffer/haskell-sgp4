@@ -53,6 +53,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define SGP4Version "SGP4 Version 2016-03-09"
@@ -62,9 +63,8 @@
 typedef enum { wgs72old, wgs72, wgs84 } gravconst_t;
 
 typedef struct {
-    long int satnum;
-    int epochyr, epochtynumrev;
     int error;
+    double jdsatepoch;
     char operationmode;
     char init, method;
 
@@ -82,12 +82,8 @@ typedef struct {
         sl3, sl4, gsto, xfact, xgh2, xgh3, xgh4, xh2, xh3, xi2, xi3, xl2, xl3,
         xl4, xlamo, zmol, zmos, atime, xli, xni;
 
-    double a, altp, alta, epochdays, jdsatepoch, jdsatepochF, nddot, ndot,
-        bstar, rcse, inclo, nodeo, ecco, argpo, mo, no_kozai;
-    // sgp4fix add new variables from tle
-    char classification, intldesg[11];
-    int ephtype;
-    long elnum, revnum;
+    double a, altp, alta, nddot, ndot, bstar, rcse, inclo, nodeo, ecco, argpo,
+        mo, no_kozai;
     // sgp4fix add unkozai'd variable
     double no_unkozai;
     // sgp4fix add singly averaged variables
@@ -95,22 +91,14 @@ typedef struct {
     // sgp4fix add constant parameters to eliminate mutliple calls during
     // execution
     double tumin, mu, radiusearthkm, xke, j2, j3, j4, j3oj2;
-
-    //       Additional elements to capture relevant TLE and object information:
-    long dia_mm;               // RSO dia in mm
-    double period_sec;         // Period in seconds
-    unsigned char active;      // "Active S/C" flag (0=n, 1=y)
-    unsigned char not_orbital; // "Orbiting S/C" flag (0=n, 1=y)
-    double rcs_m2;             // "RCS (m^2)" storage
 } elsetrec_t;
 
 elsetrec_t *SGP4Funcs_sgp4init (gravconst_t whichconst, char opsmode,
-                                const int satn, const double epoch,
-                                const double xbstar, const double xndot,
-                                const double xnddot, const double xecco,
-                                const double xargpo, const double xinclo,
-                                const double xmo, const double xno,
-                                const double xnodeo);
+                                const double epoch, const double xbstar,
+                                const double xndot, const double xnddot,
+                                const double xecco, const double xargpo,
+                                const double xinclo, const double xmo,
+                                const double xno, const double xnodeo);
 
 bool SGP4Funcs_sgp4 (
     // no longer need gravconsttype whichconst, all data contained in satrec

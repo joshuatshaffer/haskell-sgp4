@@ -7,6 +7,7 @@ module Sgp4 (Time
             ,Gravconst (Wgs72old, Wgs72, Wgs84)
             ,twoline2rv
             ,initSgp4
+            ,propagate'
             ,propagate
             ) where
 
@@ -29,7 +30,7 @@ twoline2rv l1 l2 = initSgp4 (parceTLE l1 l2)
 
 initSgp4 :: TLE -> Gravconst -> Elsetrec
 initSgp4 (TLE _ _ _ epochYear epochDay n' n'' bStar _ _ i _Ω e ω m0 n _ _) whichconst =
-    unsafePerformIO $ Raw.sgp4init whichconst 'i' 0 epoch bStar n'con n''con e ωcon icon m0con ncon _Ωcon >>= newForeignPtr Raw.p_free
+    unsafePerformIO $ Raw.sgp4init whichconst 'i' epoch bStar n'con n''con e ωcon icon m0con ncon _Ωcon >>= newForeignPtr Raw.p_free
   where
     -- convert to sgp4 units
     epoch = jday epochYear (days2mdhms epochYear epochDay) - 2433281.5
@@ -45,9 +46,12 @@ initSgp4 (TLE _ _ _ epochYear epochDay n' n'' bStar _ _ i _Ω e ω m0 n _ _) whi
     deg2rad = pi / 180.0
     xpdotp = 1440.0 / (2.0 * pi)
 
-propagate :: Elsetrec -> Time -> SatStatus
-propagate elsetrec' t = unsafePerformIO $ withForeignPtr elsetrec' bod
+propagate' :: Elsetrec -> Time -> SatStatus
+propagate' elsetrec' t = unsafePerformIO $ withForeignPtr elsetrec' bod
   where bod elsetrec = do (isOk,err,r,v) <- Raw.sgp4 elsetrec t
                           return $ if isOk
                                     then Orbiting r v
                                     else Decayed err
+
+propagate :: Elsetrec -> Int -> Int -> Int -> Int -> Int -> Double -> SatStatus
+propagate elsetrec' y mo d h mi s = propagate' elsetrec' $ (jday y (mo, d, h, mi, s) - unsafePerformIO (withForeignPtr elsetrec' Raw.jdsatepoch)) * 1440
