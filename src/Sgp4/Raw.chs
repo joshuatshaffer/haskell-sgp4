@@ -2,12 +2,10 @@
 
 module Sgp4.Raw where
 
-import Sgp4.Types
 import Foreign.Ptr (Ptr,FunPtr)
 import Foreign.C.Types
 import Control.Applicative ((<$>))
 import Foreign.Marshal.Array (peekArray,mallocArray)
-import System.IO.Unsafe (unsafePerformIO)
 import Foreign.ForeignPtr
 
 #include "SGP4.h"
@@ -19,15 +17,15 @@ type Elsetrec = ForeignPtr Elsetrec'
 data Elsetrec'
 {#pointer *elsetrec as ElsetrecPtr -> Elsetrec' #}
 
-{# fun SGP4Funcs_sgp4init as raw_sgp4init { `Gravconst',`Char',`Int',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double'} -> `ElsetrecPtr' #}
-{# fun SGP4Funcs_sgp4 as raw_sgp4' { `ElsetrecPtr',`Double',id `Ptr C2HSImp.CDouble',id `Ptr C2HSImp.CDouble'} -> `Bool' #}
+{# fun SGP4Funcs_sgp4init as sgp4init { `Gravconst',`Char',`Int',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double'} -> `ElsetrecPtr' #}
+{# fun SGP4Funcs_sgp4 as sgp4' { `ElsetrecPtr',`Double',id `Ptr C2HSImp.CDouble',id `Ptr C2HSImp.CDouble'} -> `Bool' #}
 {# fun pure SGP4Funcs_gstime as gsTime { `Double'} -> `Double' #}
 
-raw_sgp4 :: ElsetrecPtr -> Time -> IO (Bool,Int,Position,Velocity)
-raw_sgp4 elsetrec t =
+sgp4 :: ElsetrecPtr -> Double -> IO (Bool,Int,(Double,Double,Double),(Double,Double,Double))
+sgp4 elsetrec t =
   do r <- mallocArray 3 :: IO (Ptr CDouble)
      v <- mallocArray 3 :: IO (Ptr CDouble)
-     isOk <- raw_sgp4' elsetrec t r v
+     isOk <- sgp4' elsetrec t r v
      err <- {#get elsetrec->error #} elsetrec
      r' <- map cDoubleConv <$> peekArray 3 r
      v' <- map cDoubleConv <$> peekArray 3 v
@@ -41,10 +39,3 @@ cIntConv (CInt x) = fromIntegral x
 
 foreign import ccall "stdlib.h &free"
   p_free :: FunPtr (Ptr a -> IO ())
-
-propagateSgp4 :: Elsetrec -> Time -> SatStatus
-propagateSgp4 elsetrec' t = unsafePerformIO $ withForeignPtr elsetrec' bod
-  where bod elsetrec = do (isOk,err,r,v) <- raw_sgp4 elsetrec t
-                          return $ if isOk
-                                    then Orbiting r v
-                                    else Decayed err

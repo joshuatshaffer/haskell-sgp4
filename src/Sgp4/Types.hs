@@ -14,9 +14,3 @@ data SatID = SatCatNum Int
            | SatName String
            | SatIntDes String
     deriving (Show, Eq)
-
-type Time = Double
-type Position = (Double,Double,Double)
-type Velocity = (Double,Double,Double)
-
-data SatStatus = Orbiting Position Velocity | Decayed Int deriving (Show, Eq)

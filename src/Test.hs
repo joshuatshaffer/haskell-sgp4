@@ -1,7 +1,5 @@
 
-import Sgp4.Types
-import Sgp4.IO
-import Sgp4.Unit
+import Sgp4
 import Control.Arrow ((&&&))
 import Text.Printf (printf)
 import System.Process (runInteractiveCommand)

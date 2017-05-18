@@ -8,7 +8,7 @@ cabal-version:       >=1.10
 extra-source-files:  c-src
 
 library
-  exposed-modules:     Sgp4.Unit, Sgp4.IO, Sgp4.Ext, Sgp4.Types, TLE
+  exposed-modules:     Sgp4, Sgp4.Ext, Sgp4.Types, TLE
   other-modules:       Sgp4.Raw
   -- other-extensions:
   build-depends:       base >=4.9 && <4.10, regex-tdfa, process
