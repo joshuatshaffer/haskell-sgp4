@@ -19,10 +19,6 @@ data SatID = SatCatNum Int
            | SatIntDes String
     deriving (Show, Eq)
 
-data TLE = TLE Int Char String Int Double Double Double Double Int Int Double Double Double Double Double Double Int Int
-  deriving (Show, Eq)
---(RawTLE satNum classification internationalDesignator epochYear epochDay meanMotionDt1 meanMotionDt2 bStar elementNum checksumL1 inclination raan eccentricity argOfPeri meanAnomaly meanMotion revolutionNumber checksumL2)
-
 data Satellite = Sat SatID Orbit
 
 type Time = Double
