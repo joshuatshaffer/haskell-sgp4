@@ -1316,13 +1316,14 @@ static void initl (
 *    vallado, crawford, hujsak, kelso  2006
 ----------------------------------------------------------------------------*/
 
-struct elsetrec *
-SGP4Funcs_sgp4init (enum gravconsttype whichconst, char opsmode, const int satn,
-                    const double epoch, const double xbstar, const double xndot,
-                    const double xnddot, const double xecco,
-                    const double xargpo, const double xinclo, const double xmo,
-                    const double xno_kozai, const double xnodeo) {
-    struct elsetrec *satrec = malloc (sizeof (struct elsetrec));
+elsetrec_t *SGP4Funcs_sgp4init (gravconst_t whichconst, char opsmode,
+                                const int satn, const double epoch,
+                                const double xbstar, const double xndot,
+                                const double xnddot, const double xecco,
+                                const double xargpo, const double xinclo,
+                                const double xmo, const double xno_kozai,
+                                const double xnodeo) {
+    elsetrec_t *satrec = malloc (sizeof (elsetrec_t));
     /* --------------------- local variables ------------------------ */
     double ao, ainv, con42, cosio, sinio, cosio2, eccsq, omeosq, posq, rp,
         rteosq, cnodm, snodm, cosim, sinim, cosomm, sinomm, cc1sq, cc2, cc3,
@@ -1758,7 +1759,7 @@ satrec
 *    vallado, crawford, hujsak, kelso  2006
 ----------------------------------------------------------------------------*/
 
-bool SGP4Funcs_sgp4 (struct elsetrec *satrec, double tsince, double r[3],
+bool SGP4Funcs_sgp4 (elsetrec_t *satrec, double tsince, double r[3],
                      double v[3]) {
     double am, axnl, aynl, betal, cosim, cnod, cos2u, coseo1, cosi, cosip,
         cosisq, cossu, cosu, delm, delomg, em, emsq, ecose, el2, eo1, ep, esine,
@@ -2052,10 +2053,9 @@ to
 *    vallado, crawford, hujsak, kelso  2006
 --------------------------------------------------------------------------- */
 
-void SGP4Funcs_getgravconst (enum gravconsttype whichconst, double *tumin,
-                             double *mu, double *radiusearthkm, double *xke,
-                             double *j2, double *j3, double *j4,
-                             double *j3oj2) {
+void SGP4Funcs_getgravconst (gravconst_t whichconst, double *tumin, double *mu,
+                             double *radiusearthkm, double *xke, double *j2,
+                             double *j3, double *j4, double *j3oj2) {
 
     switch (whichconst) {
     // -- wgs-72 low precision str#3 constants --

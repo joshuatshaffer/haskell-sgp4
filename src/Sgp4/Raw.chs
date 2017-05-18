@@ -15,12 +15,12 @@ import Foreign.ForeignPtr (ForeignPtr)
 
 #include "SGP4.h"
 
-{#enum gravconsttype as Gravconst {underscoreToCase} deriving (Show, Eq) #}
+{#enum gravconst_t as Gravconst {underscoreToCase} deriving (Show, Eq) #}
 
 type Elsetrec = ForeignPtr Elsetrec'
 
 data Elsetrec'
-{#pointer *elsetrec as ElsetrecPtr -> Elsetrec' #}
+{#pointer *elsetrec_t as ElsetrecPtr -> Elsetrec' #}
 
 {# fun SGP4Funcs_sgp4init as sgp4init { `Gravconst',`Char',`Int',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double',`Double'} -> `ElsetrecPtr' #}
 {# fun SGP4Funcs_sgp4 as sgp4' { `ElsetrecPtr',`Double',id `Ptr C2HSImp.CDouble',id `Ptr C2HSImp.CDouble'} -> `Bool' #}
@@ -29,7 +29,7 @@ sgp4 :: ElsetrecPtr -> Double -> IO (Bool,Int,(Double,Double,Double),(Double,Dou
 sgp4 elsetrec t = allocaArray 3 (\r -> allocaArray 3 (\v -> foo r v))
   where
     foo r v = do isOk <- sgp4' elsetrec t r v
-                 err <- {#get elsetrec->error #} elsetrec
+                 err <- {#get elsetrec_t->error #} elsetrec
                  r' <- toTuple r
                  v' <- toTuple v
                  return (isOk, fromIntegral err, r', v')
